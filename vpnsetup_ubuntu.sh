@@ -588,12 +588,10 @@ update_iptables() {
   if [ "$ipt_flag" = 1 ]; then
     service fail2ban stop >/dev/null 2>&1
     iptables-save > "$IPT_FILE.old-$SYS_DT"
-    $ipi 1 -p udp --dport 1701 -m policy --dir in --pol none -j DROP
     $ipi 2 -m conntrack --ctstate INVALID -j DROP
     $ipi 3 -m conntrack --ctstate "$res" -j ACCEPT
     $ipi 4 -p udp -m multiport --dports 500,4500 -j ACCEPT
     $ipi 5 -p udp --dport 1701 -m policy --dir in --pol ipsec -j ACCEPT
-    $ipi 6 -p udp --dport 1701 -j DROP
     $ipf 1 -m conntrack --ctstate INVALID -j DROP
     $ipf 2 -i "$NET_IFACE" -o ppp+ -m conntrack --ctstate "$res" -j ACCEPT
     $ipf 3 -i ppp+ -o "$NET_IFACE" -j ACCEPT
